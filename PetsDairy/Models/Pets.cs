@@ -1,8 +1,5 @@
 ﻿using Microsoft.WindowsAzure.Storage.Table;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 
 namespace PetsDairy.Models
 {
@@ -22,5 +19,7 @@ namespace PetsDairy.Models
         public string Gender { get; set; }
 
         public DateTime Birthday { get; set; }
+
+        public string AvatarUrl { get; set; }
     }
 }

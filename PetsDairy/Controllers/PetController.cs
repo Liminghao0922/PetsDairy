@@ -1,9 +1,12 @@
-﻿using Microsoft.WindowsAzure.Storage.Table;
+﻿using AutoMapper;
+using Microsoft.WindowsAzure.Storage.Table;
 using PetsDairy.Models;
 using PetsDairy.Utils;
-using System.Web.Mvc;
+using PetsDairy.ViewModels;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Web.Mvc;
 
 namespace PetsDairy.Controllers
 {
@@ -14,7 +17,6 @@ namespace PetsDairy.Controllers
 
         public PetController()
         {
-          
         }
 
         // GET: Pet
@@ -22,7 +24,25 @@ namespace PetsDairy.Controllers
         {
             PetRepository = await AzureStorageHelper.CreateTableAsync("pets");
             TableQuery<Pet> rangeQuery = new TableQuery<Pet>().Where(TableQuery.GenerateFilterCondition("PartitionKey", QueryComparisons.Equal, User.Identity.Name));
-            return View(PetRepository.ExecuteQuery(rangeQuery).ToList());
+
+            var viewModels = Mapper.Map<IEnumerable<PetListModel>>(PetRepository.ExecuteQuery(rangeQuery));
+            return View(viewModels.ToList());
+        }
+
+        public ActionResult Create()
+        {
+            var pet = new PetCreateModel
+            {
+                Owner = User.Identity.Name
+            };
+
+            return View(pet);
+        }
+
+        [HttpPost]
+        public ActionResult Create(PetCreateModel model)
+        {
+            return RedirectToAction("Index");
         }
     }
 }
